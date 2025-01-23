@@ -71,16 +71,60 @@ it('Seleciona um produto um produto (Blog) por seu índice', () => {
   cy.get('select').select(1)
   .should('have.value', 'blog')})
 
-it.only('Marca o tipo de atendimento "Feedback"', () => {
+it('Marca o tipo de atendimento "Feedback"', () => {
   cy.get('input[type="radio"][value="feedback"]')
   .check()
   .should('be.checked')
 })
 
-it('arca o tipo de atendimento "Feedback"', () => {
-  cy.get('input[type="radio"][value="feedback"]')
-  .check()
+it('Marca cada tipo de atendimento', () => {
+  cy.get('input[type="radio"]')
+  .each((typeOfservice) => {
+    cy.wrap(typeOfservice)
+    .check()
+    .should('be.checked')
+  })
+})
+
+it('Marca ambos checkboxes, depois desmarca o último', () => {
+  cy.get('input[type="checkbox"]').check()
   .should('be.checked')
+  .last().uncheck().should('not.be.checked')
+})
+
+it('Exibe mensagem de erro quando o telefone se torna obrigatório mas não é preenchido antes do envio do formulário', () => { 
+  cy.get('#firstName').type('John')
+  cy.get('#lastName').type('Doe')
+  cy.get('#email').type('email@email.com')
+  cy.get('#open-text-area').type('Ola')
+  cy.get('#phone-checkbox').check()
+  cy.contains('button', 'Enviar').click()
+  cy.get('.error').should('be.visible')
+})
+
+it('Seleciona um arquivo da pasta fixtures', () => {
+  cy.get('#file-upload').selectFile('cypress/fixtures/example.json')
+  .should((input) => {
+    expect(input[0].files[0].name).to.equal('example.json')
+  })
+})
+
+it('Seleciona um arquivo simulando um drag-and-drop', () => {
+  cy.get('#file-upload')
+  .selectFile('cypress/fixtures/example.json', {
+    action: 'drag-drop'})
+  .should((input) => {
+    expect(input[0].files[0].name).to.equal('example.json')
+  })
+})
+
+it('Seleciona um arquivo utilizando uma fixture para a qual foi dada um alias', () => {
+  cy.fixture('example.json').as('sampleFile')
+  cy.get('#file-upload')
+  .selectFile('@sampleFile')
+  .should((input) => {
+    expect(input[0].files[0].name).to.equal('example.json')
+  })
 })
 
 })
