@@ -199,7 +199,7 @@ it('faz uma requisição HTTP', () => {
   .should('include', 'CAC TAT')
 })
 
-it.only('desafio ache o GATO', () => {
+it('desafio ache o GATO', () => {
   cy.get('#cat')
   .invoke('show')
   .should('be.visible')
